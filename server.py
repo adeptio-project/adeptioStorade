@@ -10,7 +10,7 @@ start_prep_time = time()
 HOST = ''
 PORT = 9876
 ADDR = (HOST,PORT)
-BUFSIZE = 4096
+BUFSIZE = 16384
 
 end_prep_time = time()
 
@@ -19,7 +19,7 @@ end_prep_time = time()
 start_socket_time = time()
 
 serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#serv.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+serv.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 
 serv.bind(ADDR)
 serv.listen(5)
