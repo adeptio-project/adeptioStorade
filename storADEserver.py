@@ -18,7 +18,7 @@ tstart_time = time()
 start_prep_time = time()
 
 HOST = ''
-PORT = 9876
+PORT = 9079
 ADDR = (HOST,PORT)
 BUFSIZE = 16384
 length = 0
