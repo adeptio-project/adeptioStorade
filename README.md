@@ -1,2 +1,2 @@
 # adeptioStorade
-v2.2 alpha testing for adeptio storage project
+v1.0 alpha testing for adeptio storage & streaming project
