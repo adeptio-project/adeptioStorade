@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #:: By adeptio (ADE) developers
 #:: 2018-12-05
+#:: v1.0
 #:: storADE machine info collector
 
 import os
@@ -20,11 +21,10 @@ import multiprocessing
 def get_adeptio_mn_status_check():
     mnstatus_check_tmp = subprocess.check_output("/usr/bin/adeptio-cli masternode status 2> /dev/null | grep pubkey | awk '{print $3}' | cut -c2- | head -c 34", shell=True)
     mnstatus_check = subprocess.check_output("/usr/bin/adeptio-cli masternode list full | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
-    print (mnstatus_check)
-    if mnstatus_check != 1:
+    if int(mnstatus_check) != 1:
         return ("FAILED - status check output "+ str(mnstatus_check) +"")
     else:
-        return ("SUCCESS - status check output "+ str(mnstatus_check) +"")
+        return ("SUCCESS - masternode found in blockchain network")
 
 #def get_adeptio_machine_ip():
 #    machine_external_ip = os.system("hostname --ip-address | awk '{print $1}'")
