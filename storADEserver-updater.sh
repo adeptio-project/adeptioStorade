@@ -2,10 +2,11 @@
 #:: By adeptio dev team
 #:: 2018-11-30
 #:: Check for storADEserver latest version
-#:: v2.2
+#:: v1.0
 
 Work_dir=$HOME/adeptioStorade/
 git=$(which git)
+report_as_storADE_node=$(curl -s https://storade.adeptio.cc/register_storade_node)
 
 cd $Work_dir
 new_version_available=$($git fetch origin && $git status | grep -c "git pull")
