@@ -1,6 +1,8 @@
 # adeptioStorade
 v1.0 alpha testing for adeptio storage & streaming project
 
+![Alt text](https://blog.adeptio.cc/wp-content/uploads/2018/11/Selection_105.png)
+
     sudo apt-get update -y
     sudo apt-get install python-openssl -y
 
