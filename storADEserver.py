@@ -24,9 +24,9 @@ class ServerThread(threading.Thread):
         asyncore.loop()
 
     def stop(self):
-    	asyncore.close_all()
-    	self.server.close()
-    	self.join()
+        asyncore.close_all()
+        self.server.close()
+        self.join()
 
 class StatusThread(threading.Thread):
     def __init__(self, host, port, interval):
@@ -114,7 +114,7 @@ if __name__ == "__main__":
 
     logging.info("Trying to start StatusThread...")
 
-    st = StatusThread(ADEHOST, ADEPORT, INTERVAL)
+    st = StatusThread(ADEHOST, ADESSLPORT, INTERVAL)
 
     st.start()
 

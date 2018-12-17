@@ -69,7 +69,9 @@ class StatusSocket(Auth, RequestFormatting, Machine):
         return self.socket.recv(BUFSIZE)
 
     def write_log(self):
-        data = self.make_request('STAT', self.get_last_log(20))
+        message = ";;;\n".join(self.get_last_log(20))
+
+        data = self.make_request('STAT', message)
 
         self.send(data)
 

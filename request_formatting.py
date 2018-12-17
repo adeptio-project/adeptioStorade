@@ -39,18 +39,18 @@ class RequestFormatting():
 
     def str_encode(self, text, key):
         enc = []
-        for i in range(len(clear)):
+        for i in range(len(text)):
             key_c = key[i % len(key)]
-            enc_c = chr((ord(clear[i]) + ord(key_c)) % 256)
+            enc_c = chr((ord(text[i]) + ord(key_c)) % 256)
             enc.append(enc_c)
         return base64.urlsafe_b64encode("".join(enc))
 
     def str_decode(self, text, key):
         dec = []
-        enc = base64.urlsafe_b64decode(enc)
-        for i in range(len(enc)):
+        text = base64.urlsafe_b64decode(text)
+        for i in range(len(text)):
             key_c = key[i % len(key)]
-            dec_c = chr((256 + ord(enc[i]) - ord(key_c)) % 256)
+            dec_c = chr((256 + ord(text[i]) - ord(key_c)) % 256)
             dec.append(dec_c)
         return "".join(dec)
 

@@ -16,10 +16,11 @@ class Machine(Files):
 
     def get_adeptio_mn_status_check(self):
         mnstatus_check_tmp = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep pubkey | awk '{print $3}' | cut -c2- | head -c 34", shell=True)
-        mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list full | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
-        if int(mnstatus_check) != 1:
-            return False
-        return True
+        if mnstatus_check_tmp:
+            mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list full | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
+            if int(mnstatus_check) == 1:
+                return True
+        return False
 
     def create_clients_list(self):
         file_name = self.full_path(CLIENTS_FILE)
@@ -100,7 +101,7 @@ class Machine(Files):
     def get_last_log(self, count = 1):
         if self.file_check(LOG_FILE):
             lines = self.file_read(LOG_FILE,'rt','lines')
-            return lines[-int(count)]
+            return lines[:int(count)]
         return False
 
     def full_info(self):
