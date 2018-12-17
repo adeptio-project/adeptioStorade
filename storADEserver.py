@@ -137,15 +137,3 @@ if __name__ == "__main__":
         StorADE_close()
 
     logging.info("ServerThread started")
-
-    raw_input("Press any key to stop the server now...\n")
-
-    logging.info("Trying to stop ServerThread...")
-
-    s.stop()
-
-    logging.info("Trying to stop StatusThread...")
-
-    st.stop()
-
-    StorADE_close()
