@@ -5,7 +5,7 @@ v1.0 alpha testing for adeptio storage & streaming project
 
 # adeptioStorADE requirements:
 
-• Working adeptiod masternode with status:
+• Working adeptiod with successfully started masternode:
 
     /usr/bin/adeptio-cli masternode status
     {
@@ -14,6 +14,8 @@ v1.0 alpha testing for adeptio storage & streaming project
     "pubkey" : "AaYqL2q3iKkyzYpk8Ta88nAxdYZ4kpzQZP",
     "status" : "Masternode successfully started"
     }
+
+• Ubuntu 16.04 LTS or Ubuntu 18.04 LTS;
 
 • Python 2.7 or greater version;
 
