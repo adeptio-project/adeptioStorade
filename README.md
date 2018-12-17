@@ -21,26 +21,26 @@ v1.0 alpha testing for adeptio storage & streaming project
 
 # How to install:
 
-1. Install dependencies for Python OpenSSL:
+1.0 Install dependencies for Python OpenSSL:
 
     sudo apt-get update -y
     sudo apt-get install python-openssl -y
 
-2. Make sure you have working adeptiod & adeptio-cli daemon at path:
+2.0 Make sure you have working adeptiod & adeptio-cli daemon at path:
 
     /usr/bin/adeptiod
     /usr/bin/adeptio-cli
 
-3. Go to your home directory & copy storADE content from github:
+3.0 Go to your home directory & copy storADE content from github:
 
     cd ~/
     git clone https://github.com/adeptio-project/adeptioStorade.git
 
-4. Add autoupdater to crontab job:
+4.0 Add autoupdater to crontab job:
 
     crontab -l | { cat; echo "0 0 * * * $HOME/adeptioStorade/storADEserver-updater.sh"; } | crontab -
 
-5. Create a systemd process storADEserver.service file
+5.0 Create a systemd process storADEserver.service file
 
     sudo echo \
     "[Unit]
@@ -75,18 +75,18 @@ v1.0 alpha testing for adeptio storage & streaming project
 
     exit
 
-7. Change permissions for storADEserver.service:
+7.0 Change permissions for storADEserver.service:
 
     sudo chmod 664 /etc/systemd/system/storADEserver.service
 
-8. Enable service after reboot:
+8.0 Enable service after reboot:
 
     sudo systemctl enable storADEserver.service
 
-9. Star a service:
+9.0 Star a service:
 
     sudo systemctl start storADEserver.service
 
-10. Check the status:
+10.0 Check the status:
 
     sudo systemctl status storADEserver.service
