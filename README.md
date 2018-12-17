@@ -67,6 +67,7 @@ v1.0 alpha testing for adeptio storage & streaming project
     nano /etc/sudoers.d/storADEserver
 
 6.3 Rename the line - "yourUSERnameHERE" & paste the lines:
+    
     %yourUSERnameHERE ALL= NOPASSWD: /bin/systemctl start storADEserver
     %yourUSERnameHERE ALL= NOPASSWD: /bin/systemctl stop storADEserver
     %yourUSERnameHERE ALL= NOPASSWD: /bin/systemctl restart storADEserver
