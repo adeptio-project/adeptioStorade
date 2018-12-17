@@ -5,7 +5,7 @@ v1.0 alpha testing for adeptio storage & streaming project
 
 # adeptioStorADE requirements:
 
-• Working adeptiod masternode with status:
+• Working adeptiod masternode with successfully started masternode:
 
     /usr/bin/adeptio-cli masternode status
     {
