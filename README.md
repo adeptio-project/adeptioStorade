@@ -27,19 +27,19 @@ Add autoupdater to crontab job:
 Create a systemd process storADEserver.service file
 
     sudo echo \
-"[Unit]
-Description=Adeptio storADEserver daemon for encrypted file storage
-After=network.target
-[Service]
-User=$USER
-Type=simple
-WorkingDirectory=$HOME/adeptioStorade
-ExecStart=$(which python) $HOME/adeptioStorade/storADEserver.py
-Restart=always
-Restart=on-failure
-RestartSec=60
-[Install]
-WantedBy=default.target" | sudo tee /etc/systemd/system/storADEserver.service
+    "[Unit]
+    Description=Adeptio storADEserver daemon for encrypted file storage
+    After=network.target
+    [Service]
+    User=$USER
+    Type=simple
+    WorkingDirectory=$HOME/adeptioStorade
+    ExecStart=$(which python) $HOME/adeptioStorade/storADEserver.py
+    Restart=always
+    Restart=on-failure
+    RestartSec=60
+    [Install]
+    WantedBy=default.target" | sudo tee /etc/systemd/system/storADEserver.service
 
 Change permissions for storADEserver.service:
 
@@ -56,8 +56,9 @@ Star a service:
 Check the status:
 
     sudo systemctl status storADEserver.service
+    
 
-"adeptioStorade" requirements:
+# adeptioStorADE requirements:
 
 • Python 2.7 or greater version
 
