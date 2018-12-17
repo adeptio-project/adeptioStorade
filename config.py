@@ -3,7 +3,7 @@ NAME = 'Adeptio StorADE'
 HOST = ''
 PORT = 9079
 LISTEN = 5
-ADEHOST = 'adestat.adeptio.cc'
+ADEHOST = 'storadestats.adeptio.cc'
 ADEPORT = 9000
 ADESSLPORT = 9001
 
