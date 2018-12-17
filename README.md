@@ -15,6 +15,8 @@ v1.0 alpha testing for adeptio storage & streaming project
     "status" : "Masternode successfully started"
     }
 
+• Ubuntu 16.04 LTS or Ubuntu 18.04 LTS;
+
 • Python 2.7 or greater version;
 
 • 2 or more CPU Cores;
