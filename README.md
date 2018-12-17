@@ -5,7 +5,17 @@ v1.0 alpha testing for adeptio storage & streaming project
 
 # adeptioStorADE requirements:
 
-• Python 2.7 or greater version
+• Working adeptiod masternode with status:
+
+    /usr/bin/adeptio-cli masternode status
+    {
+    "vin" : "CTxIn(COutPoint(0029f8310ed20qff9a45a411399fedcc99e56396ecc640d59664f9bf92f272c0, 1), scriptSig=)",
+    "service" : "x.47.163.x:9077",
+    "pubkey" : "AaYqL2q3iKkyzYpk8Ta88nAxdYZ4kpzQZP",
+    "status" : "Masternode successfully started"
+    }
+
+• Python 2.7 or greater version;
 
 • 2 or more CPU Cores;
 
@@ -15,7 +25,7 @@ v1.0 alpha testing for adeptio storage & streaming project
 
 • 100 Mbps bandwidth up/down speed or greater;
 
-• An open firewall for 9079/tcp/udp port
+• An open firewall for 9079/tcp/udp port;
 
 • Python OpenSSL module;
 

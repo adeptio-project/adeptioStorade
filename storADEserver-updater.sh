@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #:: By adeptio dev team
-#:: 2018-12-17
+#:: 2018-11-30
 #:: Check for storADEserver latest version
 #:: v1.0
 
