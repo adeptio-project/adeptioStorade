@@ -21,26 +21,26 @@ v1.0 alpha testing for adeptio storage & streaming project
 
 # How to install:
 
-Install dependencies:
+1. Install dependencies for Python OpenSSL:
 
     sudo apt-get update -y
     sudo apt-get install python-openssl -y
 
-Make sure you have working adeptiod & adeptio-cli daemon at path:
+2. Make sure you have working adeptiod & adeptio-cli daemon at path:
 
     /usr/bin/adeptiod
     /usr/bin/adeptio-cli
 
-Go to your home directory & copy storADE content from github:
+3. Go to your home directory & copy storADE content from github:
 
     cd ~/
     git clone https://github.com/adeptio-project/adeptioStorade.git
 
-Add autoupdater to crontab job:
+4. Add autoupdater to crontab job:
 
     crontab -l | { cat; echo "0 0 * * * $HOME/adeptioStorade/storADEserver-updater.sh"; } | crontab -
 
-Create a systemd process storADEserver.service file
+5. Create a systemd process storADEserver.service file
 
     sudo echo \
     "[Unit]
@@ -57,18 +57,36 @@ Create a systemd process storADEserver.service file
     [Install]
     WantedBy=default.target" | sudo tee /etc/systemd/system/storADEserver.service
 
-Change permissions for storADEserver.service:
+6.1 Check if user is root? If false - create sudoers files to manage systemd services for auto updater:
+
+    echo $EUID
+
+6.2 If the output is not 0 follow the next:
+
+    sudo su
+    nano /etc/sudoers.d/storADEserver
+
+6.3 Rename the line - "yourUSERnameHERE" & paste the lines:
+    %yourUSERnameHERE ALL= NOPASSWD: /bin/systemctl start storADEserver
+    %yourUSERnameHERE ALL= NOPASSWD: /bin/systemctl stop storADEserver
+    %yourUSERnameHERE ALL= NOPASSWD: /bin/systemctl restart storADEserver
+
+6.4 Save the file first. Then exit from root user:
+
+    exit
+
+7. Change permissions for storADEserver.service:
 
     sudo chmod 664 /etc/systemd/system/storADEserver.service
 
-Enable service after reboot:
+8. Enable service after reboot:
 
     sudo systemctl enable storADEserver.service
 
-Star a service:
+9. Star a service:
 
     sudo systemctl start storADEserver.service
 
-Check the status:
+10. Check the status:
 
     sudo systemctl status storADEserver.service
