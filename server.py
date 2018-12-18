@@ -42,6 +42,8 @@ class Server(asyncore.dispatcher, Machine):
 
             logging.info('Incoming connection from %s', self.getclientname(addr))
 
+            #If client conncect without ssl must not stuck here
+
             sock = ssl.wrap_socket(sock, server_side=True, certfile=self.ssl_path(STORADE_CERTFILE), keyfile=self.ssl_path(STORADE_KEYFILE)) #ssl_version=PROTOCOL_TLS, ca_certs=None
 
             Client(sock) #Send accepted client to Client function!

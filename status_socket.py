@@ -32,7 +32,7 @@ class StatusSocket(Auth, RequestFormatting, Machine):
 
         if self.ssl:
 
-            self.socket = ssl.wrap_socket(self.socket, cert_reqs=ssl.CERT_REQUIRED, certfile=self.ssl_path(STATUS_CERTFILE), keyfile=self.ssl_path(STATUS_KEYFILE))
+            self.socket = ssl.wrap_socket(self.socket, certfile=self.ssl_path(STATUS_CERTFILE), keyfile=self.ssl_path(STATUS_KEYFILE))
 
         return True
 
