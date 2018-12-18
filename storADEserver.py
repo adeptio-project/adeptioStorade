@@ -1,3 +1,8 @@
+#:: Adeptio Dev team
+#:: 2018-12-18
+#:: adeptioStorade service core
+#:: Alpha testing v1.0
+
 import threading
 import asyncore
 import logging
