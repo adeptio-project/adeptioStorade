@@ -1,5 +1,5 @@
 # adeptioStorade
-v1.0 alpha testing for adeptio storage & streaming project
+v1.0 alpha/beta testing for adeptio storage & streaming project by Adeptio development team.
 
 ![Alt text](https://blog.adeptio.cc/wp-content/uploads/2018/11/Selection_105.png)
 
