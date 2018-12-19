@@ -95,15 +95,23 @@ v1.0 alpha testing for adeptio storage & streaming project
 
     sudo systemctl enable storADEserver.service
 
-9.0 Star a service:
-
-    sudo systemctl start storADEserver.service
-
-10.0 Check the status:
-
-    sudo systemctl status storADEserver.service
-
-11.0 Update the Firewall:
+9.0 Update the Firewall:
 
     sudo ufw allow 9079/tcp
     sudo ufw allow 9079/udp
+
+10.0 Star a service:
+
+    sudo systemctl start storADEserver.service
+
+11.0 Check the status:
+
+    sudo systemctl status storADEserver.service
+
+12.0 Good idea is to check the storADE logs (Optional):
+
+    tail -n 20 ~/adeptioStorade/storage/storADE.log
+
+13.0 If something not working we can check storADEsystem process logs (Optional):
+
+    journalctl --since today -u storADEserver
