@@ -48,7 +48,7 @@ v1.0 alpha testing for adeptio storage & streaming project
     cd ~/
     git clone https://github.com/adeptio-project/adeptioStorade.git
 
-4.0 Add autoupdater to crontab job:
+4.0 Add autoupdater to crontab job (note: OK to see the output "no crontab for root":
 
     crontab -l | { cat; echo "0 0 * * * $HOME/adeptioStorade/storADEserver-updater.sh"; } | crontab -
 
