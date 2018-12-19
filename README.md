@@ -1,5 +1,7 @@
 # adeptioStorade
-v1.0 alpha/beta testing for adeptio storage & streaming project by Adeptio development team.
+v1.0 alpha/beta testing for adeptio storage & streaming project. Code written by [Adeptio](https://github.com/adeptio-project) development team. 
+
+Please register all issues at [Discord](https://discord.gg/RBXjTBa) (storade-issues) or [Github issues tab](https://github.com/adeptio-project/adeptioStorade/issues)
 
 ![Alt text](https://blog.adeptio.cc/wp-content/uploads/2018/11/Selection_105.png)
 
