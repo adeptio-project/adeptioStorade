@@ -6,7 +6,6 @@
 
 Work_dir=$HOME/adeptioStorade/
 git=$(which git)
-report_as_storADE_node=$(curl -s https://storade.adeptio.cc/register_storade_node)
 
 cd $Work_dir
 new_version_available=$($git fetch origin && $git status | grep -c "git pull")
