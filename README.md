@@ -64,7 +64,6 @@ v1.0 alpha testing for adeptio storage & streaming project
     WorkingDirectory=$HOME/adeptioStorade
     ExecStart=$(which python) $HOME/adeptioStorade/storADEserver.py
     Restart=always
-    Restart=on-failure
     RestartSec=60
     [Install]
     WantedBy=default.target" | sudo tee /etc/systemd/system/storADEserver.service

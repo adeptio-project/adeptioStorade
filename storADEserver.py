@@ -1,5 +1,5 @@
 #:: Adeptio Dev team
-#:: 2018-12-17
+#:: 2018-12-18
 #:: adeptioStorade service core
 #:: Alpha testing v1.0
 
@@ -24,9 +24,9 @@ class ServerThread(threading.Thread):
         asyncore.loop()
 
     def stop(self):
-        asyncore.close_all()
-        self.server.close()
-        self.join()
+    	asyncore.close_all()
+    	self.server.close()
+    	self.join()
 
 class StatusThread(threading.Thread):
     def __init__(self, host, port, interval):
@@ -84,9 +84,11 @@ if __name__ == "__main__":
 
     from ssl_ import SSL_
 
+    #Check if port is free
+
     if not Machine.get_adeptio_mn_status_check():
 
-        logging.critical("Adeptio Masternodes working problem")
+        logging.critical("Adeptio Masternode working problem")
 
         StorADE_close()
 

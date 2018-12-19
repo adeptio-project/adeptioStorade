@@ -166,6 +166,7 @@ class Do(Auth, RequestFormatting, Files, Machine):
 
         size = len(file)
 
+        #If file content lenght more than prepared file, don't fail just save less data
         if not self.is_prepared_file(fname, size):
             self.send(('FAIL', 'I am not prepare for this file'))
             return
