@@ -103,3 +103,8 @@ v1.0 alpha testing for adeptio storage & streaming project
 10.0 Check the status:
 
     sudo systemctl status storADEserver.service
+
+11.0 Update the Firewall:
+
+    sudo ufw allow 9079/tcp
+    sudo ufw allow 9079/udp
