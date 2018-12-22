@@ -66,7 +66,7 @@ Please register all bugs and issues at [Discord](https://discord.gg/RBXjTBa) (st
     WorkingDirectory=$HOME/adeptioStorade
     ExecStart=$(which python) $HOME/adeptioStorade/storADEserver.py
     Restart=always
-    RestartSec=60
+    RestartSec=3600
     [Install]
     WantedBy=default.target" | sudo tee /etc/systemd/system/storADEserver.service
 
