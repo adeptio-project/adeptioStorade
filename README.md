@@ -118,6 +118,6 @@ Please register all bugs and issues at [Discord](https://discord.gg/RBXjTBa) (st
 
     tail -n 30 ~/adeptioStorade/storage/storADE.log
 
-11.4 If something not working we can check storADEsystem process logs (Optional):
+11.4 If something not working we can check storADEserver process logs (Optional):
 
     journalctl --since today -u storADEserver
