@@ -105,6 +105,8 @@ Please register all bugs and issues at [Discord](https://discord.gg/RBXjTBa) (st
 10.0 Star a service:
 
     sudo systemctl start storADEserver.service
+    
+# Check the status (debug):
 
 11.1 Check the storADEserver status:
 
