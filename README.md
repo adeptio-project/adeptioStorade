@@ -106,14 +106,18 @@ Please register all bugs and issues at [Discord](https://discord.gg/RBXjTBa) (st
 
     sudo systemctl start storADEserver.service
 
-11.0 Check the status:
+11.1 Check the storADEserver status:
 
     sudo systemctl status storADEserver.service
 
-12.0 Good idea is to check the storADE logs (Optional):
+11.1 Check the adeptiocore status:
 
-    tail -n 20 ~/adeptioStorade/storage/storADE.log
+    sudo systemctl status adeptiocore.service && /usr/bin/adeptio-cli getinfo
 
-13.0 If something not working we can check storADEsystem process logs (Optional):
+11.2 Good idea is to check the storADE logs (Optional):
+
+    tail -n 30 ~/adeptioStorade/storage/storADE.log
+
+11.3 If something not working we can check storADEsystem process logs (Optional):
 
     journalctl --since today -u storADEserver
