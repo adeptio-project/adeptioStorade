@@ -121,3 +121,5 @@ Please register all bugs and issues at [Discord](https://discord.gg/RBXjTBa) (st
 11.4 If something not working we can check storADEserver process logs (Optional):
 
     journalctl --since today -u storADEserver
+
+Need help? [Discord](https://discord.gg/RBXjTBa) 
