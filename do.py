@@ -8,22 +8,95 @@ from request_formatting import RequestFormatting
 
 class Do(Auth, RequestFormatting, Files, Machine):
 
-    def __init__(self, client_name, data):
+    def __init__(self, addr):
+        self.cmd = None
+        self.in_buffer = ''
         self.out_buffer = ''
+        self.correct_request = False
         self.file = {'status':False,'fname':False,'seek':0,'done':False}
         self.close_when_done = False
-        self.client_name = client_name
-        self.cmd, self.auth, self.size, data = self.parse_request(data)
-        self.request(data)
+        self.client_ip, self.client_port = addr
+        self.client_name = str(self.client_ip) + ":" + str(self.client_port)
 
-    def getclientname(self):
-        return self.client_name
+    def _need_auth(self, method):
+        return method not in ('INFO')
+
+    def _need_data(self, method):
+        return method not in ('INFO','STAT')
+
+    def _check_request(self, data):
+
+        self.in_buffer += data
+
+        cmd, auth, size = self.parse_header(self.in_buffer[:24]) #first get just cmd and check if is set in list() if not return, then check auth and size if they not correct return
+
+        if cmd is None: #stop if cmd not in set list(), if len(self.in_buffer) is more than 4, then why should we waiting more data is cmd is incorrect? #close socket because is not be correct
+
+            return ('','buu')
+
+        if self._need_auth(cmd):
+
+            if auth is None:
+
+                return ('','buu')
+
+            if not self.check_auth(auth): #Send incorrect auth if cmd is not in list, so cmd can be (4 bytes): 0[]#
+                self.send(('FAIL', 'Incorrect Authentication Data'))
+                return ('','buu') #close socket because is not correct
+
+        if self._need_data(cmd):
+
+            if size is None: #or if size is less or equel 0, it must be > 0 #close socket because is not correct
+
+                return ('','buu')
+
+        if not self.correct_request:
+
+            self.cmd = cmd
+            self.auth = auth
+            self.size = 0 if size is None else size
+            self.in_buffer = ''
+            self.correct_request = True
+
+            return (self.in_buffer[24:],None)
+
+        else:
+
+            #Something wrong
 
     def request(self, data):
-        self.size -= len(data)
+        if not self.correct_request: #and if not yet started formating
+
+            #start formating
+
+            data, error = self._check_request(data)
+
+            #clear self.in_buffer if socket will be closed
+
+            #end formating
+
+        if not self.correct_request:
+
+            return #timeout if long time not get enough data
+
         #Can be finish previous request and start new one: vtgt5GET25H
-        self.data = data#self.parse_query(data) if len(data) > 0 else data
-        mname = 'do_' + self.cmd
+        if len(data) > self.size:
+
+            new_req = data[self.size:]
+            data = data[:self.size]
+
+        self.size -= len(data)
+        self.data += data
+        #self.data = self.parse_request(self.data)
+
+        if self.size <= 0:
+
+            self.correct_request = False
+
+        #self.data = #self.parse_query(data) if len(data) > 0 else data
+        #timeout if long time not get data which lenght >= size
+
+        mname = 'do_' + str(self.cmd)
 
         if not hasattr(self, mname):
             self.send(('FAIL', 'Unsupported method ' + self.cmd))
@@ -31,11 +104,12 @@ class Do(Auth, RequestFormatting, Files, Machine):
 
         method = getattr(self, mname)
 
-        if self.check_auth(self.auth) or self.cmd == 'INFO':
-            method()
-        else:
-            self.send(('FAIL', 'Incorrect Authentication Data'))
-            return
+        method()
+
+        if new_req:
+
+            self.request(new_req)
+
 
     def send(self, request, close = True):
 
@@ -47,9 +121,6 @@ class Do(Auth, RequestFormatting, Files, Machine):
                     binary = "&file=" + self.file_read(data['file'])
                     del data['file']
             request = self.make_request(method, data, binary)
-
-        if DEBUG:
-           logging.debug('To %s send message: %s', self.getclientname(), request)
 
         self.close_when_done = close
         self.out_buffer = self.out_buffer + str(request)
