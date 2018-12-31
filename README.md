@@ -50,9 +50,43 @@ Please register all bugs and issues at [Discord](https://discord.gg/RBXjTBa) (st
     cd ~/
     git clone https://github.com/adeptio-project/adeptioStorade.git
 
-4.0 Add autoupdater to crontab job (note: OK to see the output "no crontab for root":
+4.1 Create auto updater for storADEupdater service:
 
-    crontab -l | { cat; echo "0 0 * * * $HOME/adeptioStorade/storADEserver-updater.sh"; } | crontab -
+    echo \
+    "[Unit]
+    Description=storADEupdater.service
+ 
+    [Service]
+    Type=oneshot
+    WorkingDirectory=$HOME/adeptioStorade
+    ExecStart=$HOME/adeptioStorade/storADEserver-updater.sh
+    PrivateTmp=true" | sudo tee /etc/systemd/system/storADEupdater.service
+   
+4.2 Create timer for storADEupdater service:
+
+    echo \
+    "[Unit]
+    Description=Run storADEupdater unit daily @ 00:00:00 (UTC)
+ 
+    [Timer]
+    OnCalendar=*-*-* 00:00:00
+    Unit=storADEupdater.service
+    Persistent=true
+ 
+    [Install]
+    WantedBy=timers.target" | sudo tee /etc/systemd/system/storADEupdater.timer
+    
+4.3 Change permissions:
+
+    sudo chmod 664 /etc/systemd/system/storADEupdater.service
+    sudo chmod 664 /etc/systemd/system/storADEupdater.timer
+    
+4.4 Enable & start the storADEupdater.service & storADEupdater.timer   
+
+    sudo systemctl start storADEupdater.service
+    sudo systemctl start storADEupdater.timer
+    sudo systemctl enable storADEupdater.service
+    sudo systemctl enable storADEupdater.timer
 
 5.0 Create a systemd process storADEserver.service file
 
@@ -105,6 +139,8 @@ Please register all bugs and issues at [Discord](https://discord.gg/RBXjTBa) (st
 10.0 Star a service:
 
     sudo systemctl start storADEserver.service
+    
+# Check the status (debug):
 
 11.1 Check the storADEserver status:
 
@@ -121,3 +157,5 @@ Please register all bugs and issues at [Discord](https://discord.gg/RBXjTBa) (st
 11.4 If something not working we can check storADEserver process logs (Optional):
 
     journalctl --since today -u storADEserver
+
+Need help? [Discord](https://discord.gg/RBXjTBa) 
