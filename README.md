@@ -7,15 +7,7 @@ Please register all bugs and issues at [Discord](https://discord.gg/RBXjTBa) (st
 
 # adeptioStorADE requirements:
 
-• Working adeptiod with successfully started masternode:
-
-    /usr/bin/adeptio-cli masternode status
-    {
-    "vin" : "CTxIn(COutPoint(0029f8310ed20qff9a45a411399fedcc99e56396ecc640d59664f9bf92f272c0, 1), scriptSig=)",
-    "service" : "x.x.x.x:9077",
-    "pubkey" : "AaYqL2q3iKkyzYpk8Ta88nAxdYZ4kpzQZP",
-    "status" : "Masternode successfully started"
-    }
+• Working latest version of adeptiod;
 
 • Ubuntu 16.04 LTS or Ubuntu 18.04 LTS;
 
