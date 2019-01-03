@@ -20,24 +20,38 @@ class Machine(Files):
             mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list full | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
             if int(mnstatus_check) == 1:
                 return True
+            mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
+            if int(mnstatus_check) == 1:
+                return True
         return False
 
     def create_clients_list(self):
+        new_ver = False
         file_name = self.full_path(CLIENTS_FILE)
-        command = ADEPTIO_PATH + " masternode list full > " + file_name
-        os.system(command)
+        old_command = ADEPTIO_PATH + " masternode list full > " + file_name
+        new_command = ADEPTIO_PATH + " masternode list > " + file_name
+        os.system(old_command)
+        if self.file_check(CLIENTS_FILE):
+            if len(self.file_read(CLIENTS_FILE)) < 5:
+                new_ver = True
+                os.system(new_command)
         ips = []
         if self.file_check(CLIENTS_FILE):
             clients = self.file_read(CLIENTS_FILE)
             if clients:
                 clients = json.loads(clients)
                 if clients:
-                    for i in clients.values():
-                        s = i.split()
-                        status, prot, key, ip, st, ts, rt = s
-                        ip, separator, port = ip.rpartition(':')
-                        ip = ip.strip("[]")
-                        ips.append(ip)
+                    if new_ver:
+                        for i in clients:
+                            ip = i.get('ip').strip("[]")
+                            ips.append(ip)
+                    else:
+                        for i in clients.values():
+                            s = i.split()
+                            status, prot, key, ip, st, ts, rt = s
+                            ip, separator, port = ip.rpartition(':')
+                            ip = ip.strip("[]")
+                            ips.append(ip)
         self.file_write(CLIENTS_FILE,str(ips))
         return len(ips)
 
@@ -101,7 +115,8 @@ class Machine(Files):
     def get_last_log(self, count = 1):
         if self.file_check(LOG_FILE):
             lines = self.file_read(LOG_FILE,'rt','lines')
-            return lines[:int(count)]
+            i = len(lines)-int(count) if len(lines) > int(count) else 0
+            return lines[i:]
         return False
 
     def full_info(self):

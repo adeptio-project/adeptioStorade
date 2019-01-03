@@ -3,6 +3,8 @@ import logging
 import socket
 import ssl
 
+from asyncore import compact_traceback
+
 from config import *
 from client import Client
 from machine import Machine
@@ -20,11 +22,6 @@ class Server(asyncore.dispatcher, Machine):
         self.port = port
         logging.info("Server is ready and listening on %i port", self.port)
 
-    def getclientname(self, addr):
-        ip, port = addr
-
-        return ip + ":" + str(port)
-
     def handle_accept(self):
         pair = self.accept()
 
@@ -32,21 +29,51 @@ class Server(asyncore.dispatcher, Machine):
 
             sock, addr = pair
 
-            if not self.allow_client(addr):
+            ip, port = addr
+
+            client_name = str(ip) + ":" + str(port)
+
+            if not self.allow_client(ip):
 
                 sock.close()
 
-                logging.info('Incoming connection from %s was rejected', self.getclientname(addr))
+                logging.info('Incoming connection from %s was rejected', client_name)
 
                 return
 
-            logging.info('Incoming connection from %s', self.getclientname(addr))
+            logging.info('Incoming connection from %s', client_name)
 
-            #If client conncect without ssl must not stuck here
-
+            sock.settimeout(CLIENT_TIMEOUT) #If client conncect without ssl must not stuck here
+            
             sock = ssl.wrap_socket(sock, server_side=True, certfile=self.ssl_path(STORADE_CERTFILE), keyfile=self.ssl_path(STORADE_KEYFILE)) #ssl_version=PROTOCOL_TLS, ca_certs=None
+            
+            Client(sock, addr) #Send accepted client to Client function!
 
-            Client(sock) #Send accepted client to Client function!
+    def handle_error(self):
+        nil, t, v, tbinfo = compact_traceback()
+
+        # sometimes a user repr method will crash.
+        try:
+            self_repr = repr(self)
+        except:
+            self_repr = '<__repr__(self) failed for object at %0x>' % id(self)
+
+        try:
+            v = v[0]
+        except:
+            v = ''
+
+        if not 'The handshake operation timed out' in v:
+
+            logging.critical(
+                'uncaptured python exception, closing channel %s (%s:%s %s)',
+                    self_repr,
+                    t,
+                    v,
+                    tbinfo
+                )
+
+            self.handle_close()
 
     def handle_close(self):
 
@@ -54,13 +81,17 @@ class Server(asyncore.dispatcher, Machine):
 
         self.close()
 
-    def allow_client(self, addr):
-        ip, port = addr
+    def allow_client(self, ip):
+
         if self.local_ip(ip):
+
             return True
-        clients = self.get_clients_list()
-        if clients:
-            if ip in clients:
+
+        try:
+
+            if ip in self.get_clients_list():
+
                 return True
-        return False
-        
+
+        except:
+            return False

@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 #:: By adeptio dev team
-#:: 2018-12-17
+#:: 2019-01-03
 #:: Check for storADEserver latest version
-#:: v1.0
+#:: v1.2
 
 Work_dir=$HOME/adeptioStorade/
 git=$(which git)
 
 cd $Work_dir
-new_version_available=$($git fetch origin && $git status | grep -c "git pull")
 
 service_stop_sleep=5
 random_sleep=$(echo $(($RANDOM % 100)))

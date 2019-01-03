@@ -5,37 +5,48 @@ import base64
 
 class RequestFormatting():
 
+    def _split_data(self, size, data):
+        r = None
+        d = ''
+
+        if len(data) >= size:
+            r = data[:size]
+            d = data[size:]
+
+        return (r, d)
+
     def _get_method(self, data):
-        if len(data) >= 4:
-            return data[:4].strip(" \t\r\n\x00")
-        return data
+        r, d = self._split_data(4, data)
+
+        if r is not None:
+            r = r.strip(" \t\r\n\x00")
+
+        return (r, d)
 
     def _set_method(self, method):
         return method + "\x00" * (4-len(method))
 
     def _get_auth(self, data):
-        if len(data) >= 20:
-            return data[4:20]
-        return ''
+        return self._split_data(16, data)
 
     def _set_auth(self, key=''):
         return key + "\x00" * (16-len(key))
 
     def _get_data_size(self, data):
-        if len(data) >= 24:
-            return int(struct.unpack('I',data[20:24])[0])
-        return 0
+        r, d = self._split_data(4, data)
+
+        if r is not None:
+            r = int(struct.unpack('I',r)[0])
+
+        return (r, d)
 
     def _set_data_size(self, data):
         return struct.pack('I',len(data))
 
     def _get_data(self, data):
-        if len(data) > 24:
-            data = data[24:]
-            if "=" in data:
-                return self.parse_query(data)
-            return data
-        return {}
+        if "=" in data:
+            return self.parse_query(data)
+        return data
 
     def str_encode(self, text, key):
         enc = []
@@ -63,8 +74,18 @@ class RequestFormatting():
             return data
         return urlencode(data)
 
+    def parse_header(self, data):
+        method, data = self._get_method(data)
+        auth, data = self._get_auth(data)
+        size, data = self._get_data_size(data)
+
+        return (method, auth, size)
+
     def parse_request(self, data):
-        return (self._get_method(data), self._get_auth(data), self._get_data_size(data), self._get_data(data))
+        method, auth, size = self.parse_header(data[:24])
+        data = self._get_data(data[24:])
+
+        return (method, auth, size, data)
 
     def make_request(self, method, data, binary = ''):
         data = self.make_query(data)

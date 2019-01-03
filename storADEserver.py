@@ -1,7 +1,7 @@
 #:: Adeptio Dev team
-#:: 2018-12-18
+#:: 2018-01-03
 #:: adeptioStorade service core
-#:: Alpha testing v1.0
+#:: Alpha testing v1.2
 
 import threading
 import asyncore
@@ -10,6 +10,7 @@ import time
 import sys
 
 from config import *
+from helper import *
 from files import Files
 from server import Server
 from machine import Machine
@@ -21,11 +22,11 @@ class ServerThread(threading.Thread):
         self.server = Server(host, port, listen)
 
     def run(self):
-        asyncore.loop()
+        asyncore.loop(LOOP_TIMEOUT)
 
     def stop(self):
     	asyncore.close_all()
-    	self.server.close()
+    	self.server.handle_close()
     	self.join()
 
 class StatusThread(threading.Thread):
@@ -60,51 +61,52 @@ def StorADE_close():
 
 if __name__ == "__main__":
 
+
     Files = Files()
 
-    Files.dir_check(Files.full_path())
-
     Machine = Machine()
+
+    check = {
+             "Can't create StorADE folder": Files.dir_check(Files.full_path()), 
+
+             "Can't create SSL folder": Files.dir_check(Machine.ssl_path()), 
+
+             "ImportError: No module named OpenSSL": import_check('OpenSSL'), 
+
+             "Adeptio Masternode working problem": Machine.get_adeptio_mn_status_check()
+            }
+
+
 
     logging.basicConfig(filename=Files.full_path(LOG_FILE), level=logging.DEBUG, format='%(asctime)s | %(levelname)s | %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
     logging.getLogger().addHandler(logging.StreamHandler())
 
+
+
     logging.info("StorADE started")
 
-    try:
 
-        __import__('OpenSSL')
 
-    except ImportError:
+    for error, exist in check.items():
 
-        logging.critical("ImportError: No module named OpenSSL")
+        if not exist:
+
+            logging.critical(error)
+
+    if False in check.values():
 
         StorADE_close()
 
-    from ssl_ import SSL_
+
 
     #Check if port is free
 
-    if not Machine.get_adeptio_mn_status_check():
 
-        logging.critical("Adeptio Masternode working problem")
-
-        StorADE_close()
-
-    if not Files.dir_check(Files.full_path()):
-
-        logging.critical("Can't create StorADE folder")
-
-        StorADE_close()
-
-    if not Files.dir_check(Machine.ssl_path()):
-
-        logging.critical("Can't create SSL folder")
-
-        StorADE_close()
 
     logging.info("Trying to create ssl files...")
+
+    from ssl_ import SSL_
 
     if not SSL_().create_ssl_files():
 
@@ -114,9 +116,11 @@ if __name__ == "__main__":
 
     logging.info("SSL files created")
 
+
+
     logging.info("Trying to start StatusThread...")
 
-    st = StatusThread(ADEHOST, ADESSLPORT, INTERVAL)
+    st = StatusThread(ADEHOST, ADESSLPORT, STATUS_INTERVAL)
 
     st.start()
 
@@ -126,6 +130,8 @@ if __name__ == "__main__":
         StorADE_close()
 
     logging.info("StatusThread started")
+
+
 
     logging.info("Trying to start ServerThread...")
 
@@ -139,3 +145,17 @@ if __name__ == "__main__":
         StorADE_close()
 
     logging.info("ServerThread started")
+
+
+
+    if '--terminal' in sys.argv:
+
+        raw_input("Press any key to stop the server now...\n")
+
+        logging.info("Trying to stop...")
+
+        st.stop()
+
+        s.stop()
+
+        StorADE_close()

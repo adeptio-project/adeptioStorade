@@ -1,3 +1,4 @@
+import time
 import logging
 
 from config import *
@@ -8,34 +9,168 @@ from request_formatting import RequestFormatting
 
 class Do(Auth, RequestFormatting, Files, Machine):
 
-    def __init__(self, client_name, data):
+    def __init__(self, addr):
+        self.cmd = None
+        self.data = ''
+        self.in_buffer = ''
         self.out_buffer = ''
+        self.called_cmd = []
+        self.parsed_data = {}
+        self.timeout = None
+        self.checking = False
+        self.correct_request = False
         self.file = {'status':False,'fname':False,'seek':0,'done':False}
+        self.do_list = self._get_func_list('do_')
         self.close_when_done = False
-        self.client_name = client_name
-        self.cmd, self.auth, self.size, data = self.parse_request(data)
-        self.request(data)
+        self.client_ip, self.client_port = addr
+        self.client_name = str(self.client_ip) + ":" + str(self.client_port)
 
-    def getclientname(self):
-        return self.client_name
+    def _get_func_list(self, prefix):
+        r = []
+        for n in dir(self):
+            if n.startswith(prefix):
+                r.append(n[len(prefix):])
+        return r
 
-    def request(self, data):
-        self.size -= len(data)
-        #Can be finish previous request and start new one: vtgt5GET25H
-        self.data = data#self.parse_query(data) if len(data) > 0 else data
-        mname = 'do_' + self.cmd
+    def _exist_cmd(self, cmd):
+        return cmd in self.do_list
+
+    def _need_auth(self, method):
+        return method not in ('INFO')
+
+    def _need_data(self, method):
+        return method not in ('INFO','STAT', 'LIST')
+
+    def _just_once(self, method):
+        return method not in ('FILE')
+
+    def _call_cmd(self, cmd):
+        mname = 'do_' + str(cmd)
 
         if not hasattr(self, mname):
-            self.send(('FAIL', 'Unsupported method ' + self.cmd))
             return
 
         method = getattr(self, mname)
 
-        if self.check_auth(self.auth) or self.cmd == 'INFO':
-            method()
-        else:
-            self.send(('FAIL', 'Incorrect Authentication Data'))
+        self.called_cmd.append(str(cmd))
+
+        method()
+
+    def _format_data(self, data):
+        new_req_data = ''
+
+        if not self._need_data(self.cmd):
+
+            data = ''
+
+        if len(data) > self.size:
+
+            new_req_data = data[self.size:]
+            data = data[:self.size]
+
+        self.size -= len(data)
+
+        return data, new_req_data
+
+    def _check_request(self, data, s = 24):
+        if self.in_buffer is None: return ('',None)
+
+        self.in_buffer += data
+
+        cmd, auth, size = self.parse_header(self.in_buffer[:s])
+
+        if cmd is None:
+
+            return ('',None) #wait more data
+
+        if not self._exist_cmd(cmd):
+
+            return ('','Incorrect Command') #close socket
+
+        if self._need_auth(cmd):
+
+            if auth is None:
+
+                return ('',None) #wait more data
+
+            if not self.check_auth(auth):
+                
+                return ('','Incorrect Authentication') #close socket
+
+        if self._need_data(cmd):
+
+            if size is None:
+
+                return ('',None) #wait more data
+
+            if size <= 0:
+
+                return ('','Incorrect Size') #close socket
+
+        r = self.in_buffer[s:]
+        self.cmd = cmd
+        self.auth = auth
+        self.size = 0 if size is None else size
+        self.in_buffer = ''
+        self.correct_request = True
+        self.checking = False
+
+        return r, None
+
+    def request(self, data):
+        if self.in_buffer is None: 
             return
+
+        if self.checking: 
+            self.request(data)
+            return
+
+        if not self.correct_request:
+
+            self.checking = True
+
+            data, error = self._check_request(data)
+
+            self.checking = False
+
+            if error is not None: #close socket
+
+                self.in_buffer = None
+
+                self.send(('FAIL', error))
+
+                return
+
+        if not self.correct_request: #We waiting more data
+
+            self.timeout = time.time()
+
+            return
+
+        data, new_req_data = self._format_data(data)
+
+        self.data += data
+
+        if self.size > 0 and self._need_data(self.cmd) and self._just_once(self.cmd): #We waiting more data
+
+            self.timeout = time.time()
+
+            return
+
+        if len(self.data) > 0 and self._just_once(self.cmd):
+
+            self.parsed_data = self.parse_data(self.data)
+
+        if not self._just_once(self.cmd) or self.cmd not in self.called_cmd:
+
+            self._call_cmd(self.cmd)
+
+        if new_req_data and 1 == 0: #Turn off for now
+
+            self.correct_request = False
+
+            self.request(new_req_data)
+
 
     def send(self, request, close = True):
 
@@ -48,9 +183,6 @@ class Do(Auth, RequestFormatting, Files, Machine):
                     del data['file']
             request = self.make_request(method, data, binary)
 
-        if DEBUG:
-           logging.debug('To %s send message: %s', self.getclientname(), request)
-
         self.close_when_done = close
         self.out_buffer = self.out_buffer + str(request)
 
@@ -62,17 +194,17 @@ class Do(Auth, RequestFormatting, Files, Machine):
 
     def do_PUT(self):
         #File name must have lenght limit and symbols limit if file name is incorrect rejected request
-        if not self.data.get('fname'):
+        if not self.parsed_data.get('fname'):
             self.send(('FAIL', 'File name is Incorrect'))
             return
 
         #File size must be integer
-        if not self.data.get('fsize'):
+        if not self.parsed_data.get('fsize'):
             self.send(('FAIL', 'File size is Incorrect'))
             return
 
-        file = self.data['fname']
-        size = int(self.data['fsize'])
+        file = self.parsed_data['fname']
+        size = int(self.parsed_data['fsize'])
 
         if self.file_check(file):
             self.send(('FAIL', 'Have file with the same name'))
@@ -95,11 +227,11 @@ class Do(Auth, RequestFormatting, Files, Machine):
         self.send(('INFO', 'I am prepare for ' + str(file) + ' file which size ' + str(size)),False)
 
     def do_DEL(self):
-        if not self.data.get('fname'):
+        if not self.parsed_data.get('fname'):
             self.send(('FAIL', 'File name is Incorrect'))
             return
 
-        file = self.data['fname']
+        file = self.parsed_data['fname']
 
         if not self.file_check(file,0):
             self.send(('FAIL', 'No removable file found'))
@@ -121,11 +253,11 @@ class Do(Auth, RequestFormatting, Files, Machine):
         self.send(('LIST', {'fname': files}))
 
     def do_GET(self):
-        if not self.data.get('fname'):
+        if not self.parsed_data.get('fname'):
             self.send(('FAIL', 'File name is Incorrect'))
             return
 
-        file = self.data['fname']
+        file = self.parsed_data['fname']
 
         if not self.file_check(file):
             self.send(('FAIL', 'Don\'t have this file'))
@@ -134,35 +266,37 @@ class Do(Auth, RequestFormatting, Files, Machine):
         self.send(('FILE', {'fname': file, 'fsize': self.get_file_size(file), 'file': file}))
 
     def do_FILE(self):
+        if self.file['done']: return
+
+        if not self.parsed_data: #Wait if didn't get enough data
+
+            data = self.data
+
+            self.parsed_data = self.parse_data(data)
+
+            self.data = self.data.replace(data, '')
 
         if self.file['fname']:
 
-            file = self.data
+            data = self.data
+            file = data
             seek = self.file['seek']
             fname = self.file['fname']
+            self.data = self.data.replace(data, '')
 
-        elif not type(self.data) == str:
-        #else:
+        else:
 
-            #self.data can't be string
-            if not self.data.get('fname'):
+            if not self.parsed_data.get('fname'):
                 self.send(('FAIL', 'File name is Incorrect'))
                 return
 
-            if not self.data.get('file'):
+            if not self.parsed_data.get('file'):
                 self.send(('FAIL', 'No file data found'))
                 return
 
+            file = self.parsed_data['file']
             seek = 0
-            file = self.data['file']
-            fname = self.data['fname']
-
-        elif not self.file['done']:
-
-            self.send(('FAIL', 'Don\'t reognize data'))
-            return
-        else:
-            return
+            fname = self.parsed_data['fname']
 
         size = len(file)
 

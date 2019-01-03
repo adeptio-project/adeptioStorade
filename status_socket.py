@@ -25,7 +25,7 @@ class StatusSocket(Auth, RequestFormatting, Machine):
         try:
 
             self.socket.connect( (self.host, self.port) )
-
+            
         except:
 
             return False
