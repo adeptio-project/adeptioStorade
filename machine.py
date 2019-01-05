@@ -16,11 +16,12 @@ class Machine(Files):
 
     def get_adeptio_mn_status_check(self):
         mnstatus_check_tmp = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep pubkey | awk '{print $3}' | cut -c2- | head -c 34", shell=True)
+        mnstatus_check_tmp_new = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep addr | tail -n -1 | awk '{print $2}' | cut -c2- | head -c 34", shell=True)
         if mnstatus_check_tmp:
             mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list full | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
             if int(mnstatus_check) == 1:
                 return True
-            mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
+            mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list | grep -c '" + str(mnstatus_check_tmp_new) + "'", shell=True)
             if int(mnstatus_check) == 1:
                 return True
         return False
