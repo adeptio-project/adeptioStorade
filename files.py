@@ -1,5 +1,6 @@
 import os
 import io
+import re
 
 from config import *
 
@@ -53,6 +54,9 @@ class Files():
 
     def full_path(self, file=None):
         return os.path.join(PATH, file) if file != None else PATH
+
+    def file_name_check(self, name):
+        return re.findall(r'[^A-Za-z0-9_\-\\]',name)
 
     def file_write(self, file, data, type='wt', seek=None): #w-write, a-append, t-text, b-binary
 

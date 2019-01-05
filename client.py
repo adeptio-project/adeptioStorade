@@ -16,7 +16,7 @@ class Client(dispatcher):
 
         self.do = Do(addr)
 
-    def _timeout(self):
+    def _timeout(self): #Reset timeout if get new data or send new data while time goes on
         if self.do.timeout is not None:
             if time.time() - self.do.timeout >= CLIENT_TIMEOUT:
                 return True

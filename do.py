@@ -165,7 +165,10 @@ class Do(Auth, RequestFormatting, Files, Machine):
 
             self._call_cmd(self.cmd)
 
-        if new_req_data and 1 == 0: #Turn off for now
+        if new_req_data:
+
+            self.timeout = time.time()
+            return #Turn off for now
 
             self.correct_request = False
 
@@ -203,8 +206,25 @@ class Do(Auth, RequestFormatting, Files, Machine):
             self.send(('FAIL', 'File size is Incorrect'))
             return
 
+        if isinstance(self.parsed_data['fname'], (list, dict)):
+            self.parsed_data['fname'] = self.parsed_data['fname'][0]
+
+        try:
+            size = int(self.parsed_data['fsize'])
+        except ValueError:
+            self.send(('FAIL', 'File size is Incorrect'))
+            return
+
         file = self.parsed_data['fname']
         size = int(self.parsed_data['fsize'])
+
+        if size <= 0:
+            self.send(('FAIL', 'File size is Incorrect'))
+            return
+
+        if not self.file_name_check(file):
+            self.send(('FAIL', 'File name is Incorrect'))
+            return
 
         if self.file_check(file):
             self.send(('FAIL', 'Have file with the same name'))
@@ -216,6 +236,10 @@ class Do(Auth, RequestFormatting, Files, Machine):
 
         if SIZE_LIMIT < size:
             self.send(('FAIL', 'File too big'))
+            return
+
+        if self.is_prepared_file(file, 0):
+            self.send(('FAIL', 'I am already prepared for this file'))
             return
 
         if not self.prepare_file(file, size):
@@ -276,7 +300,7 @@ class Do(Auth, RequestFormatting, Files, Machine):
 
             self.data = self.data.replace(data, '')
 
-        if self.file['fname']:
+        if self.file['fname']:  #Close socket if long time didn't get full file and replace to prepeard
 
             data = self.data
             file = data
@@ -290,7 +314,7 @@ class Do(Auth, RequestFormatting, Files, Machine):
                 self.send(('FAIL', 'File name is Incorrect'))
                 return
 
-            if not self.parsed_data.get('file'):
+            if not self.parsed_data.get('file'): #If file data will be second recv
                 self.send(('FAIL', 'No file data found'))
                 return
 

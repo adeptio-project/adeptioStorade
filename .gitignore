@@ -1,6 +1,8 @@
 #Dirs
 /storage
+/test
 
 #Files
 *.pyc
 storADE_client_list.json
+
