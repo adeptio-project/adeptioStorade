@@ -15,7 +15,7 @@ class Machine(Files):
         return os.path.join(start, SSL_PATH, file) if file != None else os.path.join(start, SSL_PATH)
 
     def get_adeptio_mn_status_check(self):
-        mnstatus_check_tmp = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep addr | tail -n -1 | awk '{print $2}' | cut -c2- | head -c 34", shell=True)
+        mnstatus_check_tmp = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep pubkey | awk '{print $3}' | cut -c2- | head -c 34", shell=True)
 #        mnstatus_check_tmp_new = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep addr | tail -n -1 | awk '{print $2}' | cut -c2- | head -c 34", shell=True)
         if mnstatus_check_tmp:
             mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list full | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
