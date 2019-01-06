@@ -8,6 +8,7 @@ Work_dir=$HOME/adeptioStorade/
 git=$(which git)
 
 cd $Work_dir
+new_version_available=$($git fetch origin && $git status | grep -c "git pull")
 
 service_stop_sleep=5
 random_sleep=$(echo $(($RANDOM % 100)))
