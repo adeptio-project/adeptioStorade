@@ -25,7 +25,7 @@ class Server(asyncore.dispatcher, Machine):
     def handle_accept(self):
         pair = self.accept()
 
-        if pair is not None: #Server received and accept new client!
+        if pair is not None:
 
             sock, addr = pair
 
