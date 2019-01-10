@@ -3,7 +3,7 @@ v1.2 /beta testing for adeptio storage & streaming project. Code written by [Ade
 
 Please register all bugs and issues at [Discord](https://discord.gg/RBXjTBa) (storade-issues) or [Github issues tab](https://github.com/adeptio-project/adeptioStorade/issues)
 
-![Alt text](https://blog.adeptio.cc/wp-content/uploads/2018/11/Selection_105.png)
+![Alt text](https://wiki.adeptio.cc/uploads/images/gallery/2019-01-Jan/F4IKQUD5a7UCwceI-1_trans_shadow.png)
 
 # adeptioStorADE requirements:
 
