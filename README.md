@@ -1,4 +1,16 @@
 # adeptioStorade
+
+[![Build Status](https://development.adeptio.cc/job/Adeptio-CI-master-Weekly-Build/badge/icon)](https://development.adeptio.cc/job/storADE-CI-master-CodeTests)
+[![](https://img.shields.io/jenkins/c/https/development.adeptio.cc/storADE-CI-master-CodeTests.svg)](https://development.adeptio.cc/job/storADE-CI-master-CodeTests/)
+[![](https://img.shields.io/github/last-commit/adeptio-project/adeptioStorade.svg)](https://github.com/adeptio-project/adeptioStorade/commits/master)
+[![](https://img.shields.io/github/release/adeptio-project/adeptioStorade.svg)](https://github.com/adeptio-project/adeptioStorade/releases)
+[![](https://img.shields.io/github/issues/adeptio-project/adeptioStorade.svg)](https://github.com/adeptio-project/adeptioStorade/issues)
+[![](https://img.shields.io/website-up-down-green-red/https/explorer.adeptio.cc.svg?label=storADEstats)](https://explorer.adeptio.cc)
+<a href="https://discord.gg/RBXjTBa">
+<img src="https://img.shields.io/discord/447850979627630603.svg?logo=discord"
+alt="chat on Discord"></a>
+[![](https://img.shields.io/twitter/follow/adeptioproject.svg?label=Follow&style=social)](https://twitter.com/intent/user?screen_name=adeptioproject)
+
 v1.2 /beta testing for adeptio storage & streaming project. Code written by [Adeptio](https://github.com/adeptio-project) development team. 
 
 Please register all bugs and issues at [Discord](https://discord.gg/RBXjTBa) (storade-issues) or [Github issues tab](https://github.com/adeptio-project/adeptioStorade/issues)
