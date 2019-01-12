@@ -1,3 +1,6 @@
+"""
+do.py
+"""
 import time
 import logging
 
@@ -195,6 +198,53 @@ class Do(Auth, RequestFormatting, Files, Machine):
     def do_STAT(self):
         self.send(('STAT', self.full_info()))
 
+    def do_LIST(self):
+        files = self.get_files_list()
+
+        if not files:
+            self.send(('FAIL', 'No files found'))
+            return
+
+        self.send(('LIST', {'fname': files}))
+
+    def do_GET(self):
+        if not self.parsed_data.get('fname'):
+            self.send(('FAIL', 'File name is Incorrect'))
+            return
+
+        file = self.parsed_data['fname']
+
+        if not self.file_name_check(file):
+            self.send(('FAIL', 'File name is Incorrect'))
+            return
+
+        if not self.file_check(file):
+            self.send(('FAIL', 'Don\'t have this file'))
+            return
+
+        self.send(('FILE', {'fname': file, 'fsize': self.get_file_size(file), 'file': file}))
+
+    def do_DEL(self):
+        if not self.parsed_data.get('fname'):
+            self.send(('FAIL', 'File name is Incorrect'))
+            return
+
+        file = self.parsed_data['fname']
+
+        if not self.file_name_check(file):
+            self.send(('FAIL', 'File name is Incorrect'))
+            return
+
+        if not self.file_check(file,0):
+            self.send(('FAIL', 'No removable file found'))
+            return
+
+        if not self.remove_file(file):
+            self.send(('FAIL', 'Can\'t remove file'))
+            return
+
+        self.send(('INFO', 'File remove success'))
+
     def do_PUT(self):
         #File name must have lenght limit and symbols limit if file name is incorrect rejected request
         if not self.parsed_data.get('fname'):
@@ -250,47 +300,12 @@ class Do(Auth, RequestFormatting, Files, Machine):
         #If file is prepared, new PUT request for the same file must be rejected and if it is appending (writing) also must be rejected
         self.send(('INFO', 'I am prepare for ' + str(file) + ' file which size ' + str(size)),False)
 
-    def do_DEL(self):
-        if not self.parsed_data.get('fname'):
-            self.send(('FAIL', 'File name is Incorrect'))
-            return
-
-        file = self.parsed_data['fname']
-
-        if not self.file_check(file,0):
-            self.send(('FAIL', 'No removable file found'))
-            return
-
-        if not self.remove_file(file):
-            self.send(('FAIL', 'Can\'t remove file'))
-            return
-
-        self.send(('INFO', 'File remove success'))
-
-    def do_LIST(self):
-        files = self.get_files_list()
-
-        if not files:
-            self.send(('FAIL', 'No files found'))
-            return
-
-        self.send(('LIST', {'fname': files}))
-
-    def do_GET(self):
-        if not self.parsed_data.get('fname'):
-            self.send(('FAIL', 'File name is Incorrect'))
-            return
-
-        file = self.parsed_data['fname']
-
-        if not self.file_check(file):
-            self.send(('FAIL', 'Don\'t have this file'))
-            return
-
-        self.send(('FILE', {'fname': file, 'fsize': self.get_file_size(file), 'file': file}))
-
     def do_FILE(self):
         if self.file['done']: return
+
+        if not self.parsed_data and not self.data and self.size > 0: #We waiting more data
+            self.timeout = time.time()
+            return
 
         if not self.parsed_data: #Wait if didn't get enough data
 
@@ -314,20 +329,25 @@ class Do(Auth, RequestFormatting, Files, Machine):
                 self.send(('FAIL', 'File name is Incorrect'))
                 return
 
+            fname = self.parsed_data.get('fname')
+
+            if not self.file_name_check(fname):
+                self.send(('FAIL', 'File name is Incorrect'))
+                return
+
+            #If file content lenght more than prepared file, don't fail just save less data
+            if not self.is_prepared_file(fname, size):
+                self.send(('FAIL', 'I am not prepare for this file'))
+                return
+
             if not self.parsed_data.get('file'): #If file data will be second recv
                 self.send(('FAIL', 'No file data found'))
                 return
-
-            file = self.parsed_data['file']
+            
             seek = 0
-            fname = self.parsed_data['fname']
+            file = self.parsed_data.get('file')
 
         size = len(file)
-
-        #If file content lenght more than prepared file, don't fail just save less data
-        if not self.is_prepared_file(fname, size):
-            self.send(('FAIL', 'I am not prepare for this file'))
-            return
 
         self.file['seek'] = seek + size
         self.file['fname'] = fname

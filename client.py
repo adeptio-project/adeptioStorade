@@ -23,9 +23,9 @@ class Client(dispatcher):
         return False
 
     def handle_close(self):
-
+ 
         if DEBUG:
-            logging.debug('Disconnected from %s client from which got %i bytes and send %i bytes', self.client_name, self.get_data, self.send_data)
+            logging.debug('Disconnected from %s client got %i bytes and sent %i bytes', self.client_name, self.get_data, self.send_data)
         else:
             logging.info('Disconnected from %s client', self.client_name)
 

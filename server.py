@@ -25,7 +25,7 @@ class Server(asyncore.dispatcher, Machine):
     def handle_accept(self):
         pair = self.accept()
 
-        if pair is not None:
+        if pair is not None: #Server received and accept new client!
 
             sock, addr = pair
 
@@ -59,11 +59,11 @@ class Server(asyncore.dispatcher, Machine):
             self_repr = '<__repr__(self) failed for object at %0x>' % id(self)
 
         try:
-            v = v[0]
+            v = str(v)
         except:
             v = ''
 
-        if not 'The handshake operation timed out' in v:
+        if not 'The handshake operation timed out' in v and not 'http request' in v:
 
             logging.critical(
                 'uncaptured python exception, closing channel %s (%s:%s %s)',

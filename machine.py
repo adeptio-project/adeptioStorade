@@ -19,18 +19,12 @@ class Machine(Files):
         if not mnstatus_check_tmp:
             mnstatus_check_tmp = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep addr | tail -n -1 | awk '{print $2}' | cut -c2- | head -c 34", shell=True)
         if mnstatus_check_tmp:
-            try:
-                mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list full | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
-                if int(mnstatus_check) == 1:
-                    return True
-            except:
-                pass
-            try:
-                mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
-                if int(mnstatus_check) == 1:
-                    return True
-            except:
-                pass
+            mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list full | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
+            if int(mnstatus_check) == 1:
+                return True
+            mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
+            if int(mnstatus_check) == 1:
+                return True
         return False
 
     def create_clients_list(self):
