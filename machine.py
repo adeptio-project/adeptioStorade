@@ -14,35 +14,49 @@ class Machine(Files):
     def ssl_path(self, file=None, start=PATH):
         return os.path.join(start, SSL_PATH, file) if file != None else os.path.join(start, SSL_PATH)
 
-    def get_adeptio_mn_status_check(self):
-        mnstatus_check_tmp = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep pubkey | awk '{print $3}' | cut -c2- | head -c 34", shell=True)
-        if not mnstatus_check_tmp:
-            mnstatus_check_tmp = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep addr | tail -n -1 | awk '{print $2}' | cut -c2- | head -c 34", shell=True)
-        if mnstatus_check_tmp:
-            try:
-                mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list full | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
-                if int(mnstatus_check) == 1:
-                    return True
-            except:
-                pass
-            try:
-                mnstatus_check = subprocess.check_output(ADEPTIO_PATH + " masternode list | grep -c '" + str(mnstatus_check_tmp) + "'", shell=True)
-                if int(mnstatus_check) == 1:
-                    return True
-            except:
-                pass
+    def check_adeptio_mn_status(self):
+        try:
+            status = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep pubkey | awk '{print $3}' | cut -c2- | head -c 34", shell=True)
+            if int(status) == 1:
+                return True
+        except:
+            pass
+        try:
+            status = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep addr | tail -n -1 | awk '{print $2}' | cut -c2- | head -c 34", shell=True)
+            if int(status) == 1:
+                return True
+        except:
+            pass
         return False
 
-    def create_clients_list(self):
-        new_ver = False
+    def check_adeptio_mn_list(self):
+        try:
+            result_count = subprocess.check_output(ADEPTIO_PATH + " masternode list full | wc -l", shell=True)
+            if int(result_count) > 5:
+                return True
+        except:
+            pass
+        try:
+            result_count = subprocess.check_output(ADEPTIO_PATH + " masternode list | wc -l", shell=True)
+            if int(result_count) > 5:
+                return True
+        except:
+            pass
+        return False
+
+    def get_adeptio_mn_list(self):
         file_name = self.full_path(CLIENTS_FILE)
         old_command = ADEPTIO_PATH + " masternode list full > " + file_name
         new_command = ADEPTIO_PATH + " masternode list > " + file_name
         os.system(old_command)
         if self.file_check(CLIENTS_FILE):
             if len(self.file_read(CLIENTS_FILE)) < 5:
-                new_ver = True
                 os.system(new_command)
+                return True
+        return False
+
+    def create_clients_list(self):
+        new_ver = self.get_adeptio_mn_list()
         ips = []
         if self.file_check(CLIENTS_FILE):
             clients = self.file_read(CLIENTS_FILE)

@@ -1,7 +1,7 @@
 #:: Adeptio Dev team
-#:: 2018-01-03
+#:: 2018-12-18
 #:: adeptioStorade service core
-#:: Alpha testing v1.2
+#:: Alpha testing v1.0
 
 import threading
 import asyncore
@@ -73,7 +73,13 @@ if __name__ == "__main__":
 
              "ImportError: No module named OpenSSL": import_check('OpenSSL'), 
 
-             "Adeptio Masternode working problem": Machine.get_adeptio_mn_status_check()
+             "Can't create clients list file": Machine.create_clients_list() > 1,
+
+             "Can't find working masternode": Machine.check_adeptio_mn_status(),
+
+             "Can't get masternodes list": Machine.check_adeptio_mn_list(),
+
+             "Can't find " + ADEPTIO_PATH + " file": Files._is_file(ADEPTIO_PATH)
             }
 
 

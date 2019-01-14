@@ -37,16 +37,18 @@ class RequestFormatting():
 
         if r is not None:
             r = int(struct.unpack('I',r)[0])
+            if r == 1651663172:
+                r = None
 
         return (r, d)
 
     def _set_data_size(self, data):
         return struct.pack('I',len(data))
 
-    def _get_data(self, data):
+    def parse_data(self, data):
         if "=" in data:
-            return self.parse_query(data)
-        return data
+            return self._parse_query(data)
+        return {}
 
     def str_encode(self, text, key):
         enc = []
@@ -58,14 +60,17 @@ class RequestFormatting():
 
     def str_decode(self, text, key):
         dec = []
-        text = base64.urlsafe_b64decode(text)
+        try:
+            text = base64.urlsafe_b64decode(text)
+        except:
+            text = ''
         for i in range(len(text)):
             key_c = key[i % len(key)]
             dec_c = chr((256 + ord(text[i]) - ord(key_c)) % 256)
             dec.append(dec_c)
         return "".join(dec)
 
-    def parse_query(self, data):
+    def _parse_query(self, data):
         return dict( (k, v if len(v)>1 else v[0] ) 
            for k, v in parse_qs(data).iteritems() )
 
@@ -83,7 +88,7 @@ class RequestFormatting():
 
     def parse_request(self, data):
         method, auth, size = self.parse_header(data[:24])
-        data = self._get_data(data[24:])
+        data = self.parse_data(data[24:])
 
         return (method, auth, size, data)
 
