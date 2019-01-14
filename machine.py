@@ -17,13 +17,13 @@ class Machine(Files):
     def check_adeptio_mn_status(self):
         try:
             status = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep pubkey | awk '{print $3}' | cut -c2- | head -c 34", shell=True)
-            if int(status) == 1:
+            if status:
                 return True
         except:
             pass
         try:
             status = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep addr | tail -n -1 | awk '{print $2}' | cut -c2- | head -c 34", shell=True)
-            if int(status) == 1:
+            if status:
                 return True
         except:
             pass
