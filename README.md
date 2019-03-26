@@ -37,7 +37,11 @@ Please register all bugs and issues at [Discord](https://discord.gg/RBXjTBa) (st
 
 • Python OpenSSL module;
 
-# How to install:
+# How to install (auto with dpkg package):
+
+    sudo apt-get install ./storade-server_1.2_amd64.deb
+
+# How to install (manual):
 
 1.0 Install dependencies for Python OpenSSL:
 
