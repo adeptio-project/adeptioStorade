@@ -11,7 +11,7 @@
 alt="chat on Discord"></a>
 [![](https://img.shields.io/twitter/follow/adeptioproject.svg?label=Follow&style=social)](https://twitter.com/intent/user?screen_name=adeptioproject)
 
-v1.2 /beta testing for adeptio storage & streaming project. Code written by [Adeptio](https://github.com/adeptio-project) development team. 
+v1.2 beta testing for adeptio storage & streaming project. Code written by [Adeptio](https://github.com/adeptio-project) development team. 
 
 Please register all bugs and issues at [Discord](https://discord.gg/RBXjTBa) (storade-issues) or [Github issues tab](https://github.com/adeptio-project/adeptioStorade/issues)
 
