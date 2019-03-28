@@ -6,20 +6,24 @@ import ssl
 from asyncore import compact_traceback
 
 from config import *
+from helper import *
 from client import Client
 from machine import Machine
 
 class Server(asyncore.dispatcher, Machine):
 
-    def __init__(self, host, port, listen):
+    def __init__(self, host, port, listen, prot = 'IPv4'):
         asyncore.dispatcher.__init__(self)
-        self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
-        #self.create_socket(socket.AF_INET6, socket.SOCK_STREAM) #IPv6
+        if prot == 'IPv6':
+            self.create_socket(socket.AF_INET6, socket.SOCK_STREAM)
+        else:
+            self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         #self.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.set_reuse_addr() # try to re-use a server port if possible
         self.bind((host, port))
         self.listen(listen)
         self.port = port
+        self.protocol = prot
         logging.info("Server is ready and listening on %i port", self.port)
 
     def handle_accept(self):
@@ -29,7 +33,15 @@ class Server(asyncore.dispatcher, Machine):
 
             sock, addr = pair
 
-            ip, port = addr
+            if self.protocol == 'IPv6':
+
+                ip, port, _, _ = addr
+
+                addr = ip, port
+
+            else:
+
+                ip, port = addr
 
             client_name = str(ip) + ":" + str(port)
 

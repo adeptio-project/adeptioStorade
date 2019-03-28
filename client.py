@@ -23,7 +23,7 @@ class Client(dispatcher):
         return False
 
     def handle_close(self):
- 
+
         if DEBUG:
             logging.debug('Disconnected from %s client got %i bytes and sent %i bytes', self.client_name, self.get_data, self.send_data)
         else:

@@ -17,9 +17,9 @@ from machine import Machine
 from status_socket import StatusSocket
 
 class ServerThread(threading.Thread):
-    def __init__(self, host, port, listen):
+    def __init__(self, host, port, listen, prot):
         threading.Thread.__init__(self)
-        self.server = Server(host, port, listen)
+        self.server = Server(host, port, listen, prot)
 
     def run(self):
         asyncore.loop(LOOP_TIMEOUT)
@@ -78,6 +78,8 @@ if __name__ == "__main__":
              "Can't find working masternode": Machine.check_adeptio_mn_status(),
 
              "Can't get masternodes list": Machine.check_adeptio_mn_list(),
+
+             "Can't get masternode ip": Machine.check_adeptio_mn_ip(),
 
              "Can't find " + ADEPTIO_PATH + " file": Files._is_file(ADEPTIO_PATH)
             }
@@ -141,7 +143,13 @@ if __name__ == "__main__":
 
     logging.info("Trying to start ServerThread...")
 
-    s = ServerThread(HOST, PORT, LISTEN)
+    if Machine.check_adeptio_mn_ip() == 'IPv6':
+
+        s = ServerThread(HOST_V6, PORT_V6, LISTEN, 'IPv6')
+
+    else:
+
+        s = ServerThread(HOST, PORT, LISTEN, 'IPv4')
 
     s.start()
 

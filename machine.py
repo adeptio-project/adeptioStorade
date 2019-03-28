@@ -1,5 +1,7 @@
 import os
+import re
 import sys
+import socket
 import platform
 import subprocess
 import multiprocessing
@@ -16,14 +18,12 @@ class Machine(Files):
 
     def check_adeptio_mn_status(self):
         try:
-            status = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep pubkey | awk '{print $3}' | cut -c2- | head -c 34", shell=True)
-            if status:
+            if subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep pubkey | awk '{print $3}' | cut -c2- | head -c 34", shell=True):
                 return True
         except:
             pass
         try:
-            status = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep addr | tail -n -1 | awk '{print $2}' | cut -c2- | head -c 34", shell=True)
-            if status:
+            if subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep addr | tail -n -1 | awk '{print $2}' | cut -c2- | head -c 34", shell=True):
                 return True
         except:
             pass
@@ -43,6 +43,28 @@ class Machine(Files):
         except:
             pass
         return False
+
+    def check_adeptio_mn_ip(self):
+        mn_ip = False
+        try:
+            netaddr = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep netaddr", shell=True)
+            if ': "' in netaddr and '",' in netaddr:
+                ip = re.search(': "(.*):.*",', netaddr)
+                mn_ip = ip.group(1)
+                if mn_ip.startswith('[') and mn_ip.endswith(']'):
+                    mn_ip = mn_ip[1:-1]
+        except:
+            pass
+        try:
+            netaddr = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep netaddr", shell=True)
+            if ': "' in netaddr and '",' in netaddr:
+                ip = re.search(': "(.*):.*",', netaddr)
+                mn_ip = ip.group(1)
+                if mn_ip.startswith('[') and mn_ip.endswith(']'):
+                    mn_ip = mn_ip[1:-1]
+        except:
+            pass
+        return self.version_ip(mn_ip)
 
     def get_adeptio_mn_list(self):
         file_name = self.full_path(CLIENTS_FILE)
@@ -124,6 +146,20 @@ class Machine(Files):
             StorADESpaceLeft = MachineSpaceLeft - RESERVED_SIZE
 
         return StorADESpaceLeft
+
+    def version_ip(self, ip):
+        ip = str(ip)
+        try:
+            socket.inet_pton(socket.AF_INET6, ip)
+            return 'IPv6'
+        except socket.error:
+            pass
+        try:
+            socket.inet_aton(ip)
+            return 'IPv4'
+        except socket.error:
+            pass
+        return False
 
     def valid_ip(self, ip):
         return ip.count('.') == 3 and all(0<=int(num)<256 for num in ip.rstrip().split('.'))

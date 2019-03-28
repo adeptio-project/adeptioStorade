@@ -214,7 +214,7 @@ class Do(Auth, RequestFormatting, Files, Machine):
 
         file = self.parsed_data['fname']
 
-        if not self.file_name_check(file):
+        if self.file_name_check(file):
             self.send(('FAIL', 'File name is Incorrect'))
             return
 
@@ -231,7 +231,7 @@ class Do(Auth, RequestFormatting, Files, Machine):
 
         file = self.parsed_data['fname']
 
-        if not self.file_name_check(file):
+        if self.file_name_check(file):
             self.send(('FAIL', 'File name is Incorrect'))
             return
 
@@ -272,7 +272,7 @@ class Do(Auth, RequestFormatting, Files, Machine):
             self.send(('FAIL', 'File size is Incorrect'))
             return
 
-        if not self.file_name_check(file):
+        if self.file_name_check(file):
             self.send(('FAIL', 'File name is Incorrect'))
             return
 
@@ -331,7 +331,7 @@ class Do(Auth, RequestFormatting, Files, Machine):
 
             fname = self.parsed_data.get('fname')
 
-            if not self.file_name_check(fname):
+            if self.file_name_check(fname):
                 self.send(('FAIL', 'File name is Incorrect'))
                 return
 
