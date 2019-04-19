@@ -45,7 +45,11 @@ class Machine(Files):
         return False
 
     def check_adeptio_mn_ip(self):
-        mn_ip = False
+        mn_ip = self.get_mn_ip()
+        return self.version_ip(mn_ip) if mn_ip else False
+
+    def get_mn_ip(self):
+        mn_ip = ''
         try:
             netaddr = subprocess.check_output(ADEPTIO_PATH + " masternode status 2> /dev/null | grep netaddr", shell=True)
             if ': "' in netaddr and '",' in netaddr:
@@ -64,7 +68,7 @@ class Machine(Files):
                     mn_ip = mn_ip[1:-1]
         except:
             pass
-        return self.version_ip(mn_ip)
+        return mn_ip
 
     def get_adeptio_mn_list(self):
         file_name = self.full_path(CLIENTS_FILE)
@@ -179,6 +183,7 @@ class Machine(Files):
 
     def full_info(self):
         return {
+            'ip': self.get_mn_ip(),
             'os': self.get_machine_name(),
             'os_version': self.get_kernel_version(),
             'type': self.get_platform_type(),

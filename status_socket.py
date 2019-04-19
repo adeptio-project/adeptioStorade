@@ -1,4 +1,5 @@
 """"""
+import logging
 import socket
 import ssl
 
@@ -33,7 +34,13 @@ class StatusSocket(Auth, RequestFormatting, Machine):
 
         if self.ssl:
 
-            self.socket = ssl.wrap_socket(self.socket, certfile=self.ssl_path(STATUS_CERTFILE), keyfile=self.ssl_path(STATUS_KEYFILE))
+            try:
+
+                self.socket = ssl.wrap_socket(self.socket, certfile=self.ssl_path(STATUS_CERTFILE), keyfile=self.ssl_path(STATUS_KEYFILE))
+
+            except:
+
+                return False
 
         return True
 
@@ -77,9 +84,11 @@ class StatusSocket(Auth, RequestFormatting, Machine):
         self.send(data)
 
     def send_status_info(self):
-
+        #write to log when doing this
         self.create_socket()
         if self.connect():
+            logging.info("Sending status information")
+
             self.write()
             self.read()
             self.close_socket()
