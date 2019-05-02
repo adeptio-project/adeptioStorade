@@ -9,6 +9,7 @@ from config import *
 from helper import *
 from client import Client
 from machine import Machine
+from status_socket import StatusSocket
 
 class Server(asyncore.dispatcher, Machine):
 
@@ -84,6 +85,14 @@ class Server(asyncore.dispatcher, Machine):
                     v,
                     tbinfo
                 )
+
+            logging.info("Trying to send error information")
+            stat_server = StatusSocket(ADEHOST, ADEPORT, False)
+            if stat_server.send_error():
+                logging.info("Error information sent successful")
+            else:
+                logging.info("Error information sent unsuccessful")
+            logging.info("StorADE closed")
 
             self.handle_close()
 
