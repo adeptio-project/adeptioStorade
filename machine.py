@@ -166,14 +166,14 @@ class Machine(Files):
         return False
 
     def valid_ipv6(self, ip):
-        if( ip.count(':') == 7 )
+        if ip.count(':') == 7:
             valid_characters = set('ABCDEFabcdef:0123456789')
             address_list = ip.split(":")
             return len(address_list) == 8 and all(c in valid_characters for c in ip) and all(len(c) <= 4 for c in address_list)
         return False
 
     def valid_ipv4(self, ip):
-        if( ip.count('.') == 3 )
+        if ip.count('.') == 3:
             return all(0<=int(num)<256 for num in ip.rstrip().split('.'))
         return False
 
