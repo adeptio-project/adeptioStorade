@@ -76,7 +76,7 @@ class Server(asyncore.dispatcher, Machine):
         except:
             v = ''
 
-        if not 'The handshake operation timed out' in v and not 'http request' in v and not 'EOF occurred in violation of protocol' in v:
+        if not 'The handshake operation timed out' in v and not 'http request' in v and not 'EOF occurred in violation of protocol' in v and not "[Errno 0] Error" in v:
 
             logging.critical(
                 'uncaptured python exception, closing channel %s (%s:%s %s)',
