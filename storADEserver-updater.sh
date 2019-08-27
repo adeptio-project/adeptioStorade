@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 #:: By adeptio dev team
-#:: 2019-07-01
+#:: 2019-08-27
 #:: Check for storADEserver latest version
 #:: v1.2
 
-Work_dir=$HOME/adeptioStorade/
+work_dir=$HOME/adeptioStorade/
 git=$(which git)
 
-cd $Work_dir
+cd $work_dir
 new_version_available=$($git fetch origin && $git status | grep -c "git pull")
 
 service_stop_sleep=5
