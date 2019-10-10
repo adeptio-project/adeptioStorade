@@ -1,7 +1,8 @@
 # adeptioStorade
 
-[![Build Status](https://development.adeptio.cc/job/Adeptio-CI-master-Weekly-Build/badge/icon)](https://development.adeptio.cc/job/storADE-CI-master-CodeTests)
+<!---[![Build Status](https://development.adeptio.cc/job/Adeptio-CI-master-Weekly-Build/badge/icon)](https://development.adeptio.cc/job/storADE-CI-master-CodeTests)
 [![](https://img.shields.io/jenkins/c/https/development.adeptio.cc/storADE-CI-master-CodeTests.svg)](https://development.adeptio.cc/job/storADE-CI-master-CodeTests/)
+-->
 [![](https://img.shields.io/github/last-commit/adeptio-project/adeptioStorade.svg)](https://github.com/adeptio-project/adeptioStorade/commits/master)
 [![](https://img.shields.io/github/release/adeptio-project/adeptioStorade.svg)](https://github.com/adeptio-project/adeptioStorade/releases)
 [![](https://img.shields.io/github/issues/adeptio-project/adeptioStorade.svg)](https://github.com/adeptio-project/adeptioStorade/issues)
